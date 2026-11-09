@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1020" />
+    <meta name="description" content="Securely upload files." />
+    <title>FileDrop — Secure file upload</title>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <main class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="FileDrop home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v3A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span>filedrop<span class="brand-dot">.</span></span>
+        </a>
+        <span class="secure-label"><span class="secure-dot"></span> Secure upload</span>
+      </header>
+
+      <section class="hero">
+        <div class="eyebrow"><span class="eyebrow-line"></span> SIMPLE. PRIVATE. DIRECT.</div>
+        <h1>Send your files.<br /><span>No account needed.</span></h1>
+        <p class="hero-copy">Choose the files you want to share and upload them securely. No sign-up, no unnecessary steps.</p>
+      </section>
+
+      <section class="upload-card" aria-labelledby="upload-heading">
+        <div class="card-heading">
+          <div>
+            <div class="card-kicker">YOUR UPLOAD</div>
+            <h2 id="upload-heading">Add your files</h2>
+          </div>
+          <span class="file-limit">UP TO 25 MB / FILE</span>
+        </div>
+
+        <button class="dropzone" id="dropzone" type="button" aria-label="Choose files or drop them here">
+          <span class="upload-icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v3A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="drop-title">Drop files here</span>
+          <span class="drop-subtitle">or <span class="browse-text">browse your device</span></span>
+          <span class="drop-footnote">Multiple files supported · Any file type</span>
+        </button>
+        <input id="file-input" type="file" multiple hidden />
+
+        <div class="queue-section" id="queue-section" hidden>
+          <div class="queue-heading">
+            <span id="queue-count">Selected files</span>
+            <button class="text-button" id="clear-button" type="button">Clear all</button>
+          </div>
+          <ul class="file-list" id="file-list"></ul>
+        </div>
+
+        <div class="message" id="message" role="status" aria-live="polite" hidden></div>
+
+        <button class="upload-button" id="upload-button" type="button" disabled>
+          <span id="upload-button-label">Upload files</span>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <p class="privacy-note">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          Your files are stored privately. Only the site owner can view them.
+        </p>
+      </section>
+
+      <footer class="footer">
+        <span>Powered by secure cloud storage</span>
+        <span class="footer-separator">·</span>
+        <span>No account required</span>
+      </footer>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
