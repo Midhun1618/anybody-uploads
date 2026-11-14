@@ -20,6 +20,14 @@ const elements = {
   message: document.querySelector('#message'),
 }
 
+// Internal status values stay the same; this only changes what is displayed.
+const STATUS_LABELS = {
+  Ready: '[READY]',
+  Uploading: '[....]',
+  Uploaded: '[ OK ]',
+  Failed: '[FAIL]',
+}
+
 let supabase = null
 let selectedFiles = []
 let isUploading = false
@@ -28,7 +36,7 @@ if (SUPABASE_URL && SUPABASE_KEY) {
   supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 } else {
   showMessage(
-    'Setup needed: add your Supabase project URL and publishable key to the .env file, then restart the website.',
+    '[ERROR] missing env: set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in .env, then restart the dev server.',
     'error'
   )
 }
@@ -103,7 +111,7 @@ function addFiles(fileList) {
 
   if (rejected > 0) {
     showMessage(
-      `${rejected} file(s) exceeded the 25 MB per-file limit and were not added.`,
+      `[ERROR] ${rejected} file(s) exceed MAX=25MB and were skipped.`,
       'error'
     )
   }
@@ -112,9 +120,9 @@ function addFiles(fileList) {
 function renderQueue() {
   const hasFiles = selectedFiles.length > 0
   elements.queueSection.hidden = !hasFiles
-  elements.queueCount.textContent = `${selectedFiles.length} file${selectedFiles.length === 1 ? '' : 's'} selected`
+  elements.queueCount.textContent = `${selectedFiles.length} file${selectedFiles.length === 1 ? '' : 's'} queued`
   elements.uploadButton.disabled = !hasFiles || isUploading || !supabase
-  elements.uploadButtonLabel.textContent = isUploading ? 'Uploading…' : 'Upload files'
+  elements.uploadButtonLabel.textContent = isUploading ? '[ EXECUTING... ]' : '[ EXECUTE ]'
   elements.fileList.innerHTML = ''
 
   selectedFiles.forEach((item) => {
@@ -135,13 +143,13 @@ function renderQueue() {
 
     const meta = document.createElement('span')
     meta.className = 'file-meta'
-    meta.textContent = `${formatBytes(item.file.size)}${item.uploadedAt ? ` · Uploaded ${item.uploadedAt}` : ''}`
+    meta.textContent = `${formatBytes(item.file.size)} · 0b${toBinary(item.file.size)}${item.uploadedAt ? ` · ${item.uploadedAt}` : ''}`
 
     details.append(name, meta)
 
     const status = document.createElement('span')
     status.className = `file-status ${item.status === 'Uploaded' ? 'is-success' : item.status === 'Failed' ? 'is-error' : ''}`
-    status.textContent = item.status
+    status.textContent = STATUS_LABELS[item.status] || item.status
 
     li.append(icon, details, status)
 
@@ -150,7 +158,7 @@ function renderQueue() {
       remove.className = 'remove-button'
       remove.type = 'button'
       remove.setAttribute('aria-label', `Remove ${item.file.name}`)
-      remove.textContent = '×'
+      remove.textContent = '[x]'
       remove.addEventListener('click', () => {
         selectedFiles = selectedFiles.filter((file) => file.id !== item.id)
         renderQueue()
@@ -210,12 +218,12 @@ async function uploadFiles() {
 
   if (failed === 0) {
     showMessage(
-      `${succeeded} file${succeeded === 1 ? '' : 's'} uploaded successfully. You can find ${succeeded === 1 ? 'it' : 'them'} in your Supabase Storage dashboard.`,
+      `[ OK ] ${succeeded} file${succeeded === 1 ? '' : 's'} uploaded.\nexit code: 0`,
       'success'
     )
   } else {
     showMessage(
-      `${succeeded} uploaded successfully; ${failed} failed. You can retry the failed files.`,
+      `[FAIL] ${succeeded} uploaded, ${failed} failed. retry the failed files.\nexit code: 1`,
       'error'
     )
   }
@@ -239,7 +247,11 @@ function getFileIcon(name) {
   const extension = name.split('.').pop()?.toLowerCase() || ''
   const known = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'rar', 'jpg', 'jpeg', 'png', 'gif', 'mp4', 'mp3', 'txt']
   const label = known.includes(extension) ? extension.slice(0, 4).toUpperCase() : 'FILE'
-  return `<span>${label}</span>`
+  return `<span>[${label}]</span>`
+}
+
+function toBinary(n) {
+  return n.toString(2).padStart(8, '0')
 }
 
 function formatBytes(bytes) {
